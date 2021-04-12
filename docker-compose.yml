@@ -1,0 +1,29 @@
+version: "3"
+services:
+  database:
+    image: mysql:8.0
+    volumes:
+      - database-data-volume:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=422524
+      - MYSQL_USER=faust
+      - MYSQL_PASSWORD=faust
+      - MYSQL_DATABASE=faust
+    ports:
+      - 3306:3306
+  fastapi:
+    build:
+      context: .
+      dockerfile: fastapi.Dockerfile
+#    image: my-fast-api/
+    environment:
+      - DB_URL=mysql+pymysql://faust:faust@database/faust
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/usr/src/
+#      - ./alembic:/usr/src/alembic
+    command: ["uvicorn" ,"app.main:app", "--reload",  "--host",   "0.0.0.0"]
+#    command: ["sh"]
+volumes:
+  database-data-volume:
